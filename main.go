@@ -60,9 +60,7 @@ func generateDictionary() Dictionary {
 }
 
 func (dictionary *Dictionary) generateHaiku() {
-	fmt.Println(dictionary.generateLine(5))
-	fmt.Println(dictionary.generateLine(7))
-	fmt.Println(dictionary.generateLine(5))
+	fmt.Printf("%s\n%s\n%s", dictionary.generateLine(5), dictionary.generateLine(7), dictionary.generateLine(5))
 }
 
 func (dictionary *Dictionary) generateLine(syllableCount int) string {
@@ -70,7 +68,7 @@ func (dictionary *Dictionary) generateLine(syllableCount int) string {
 	line := ""
 
 	for remainingCount > 0 {
-		time.Sleep(time.Millisecond * 300)
+		time.Sleep(time.Millisecond * 20)
 		rand.Seed(time.Now().UnixNano())
 		randomSyllable := rand.Intn(remainingCount) + 1
 
