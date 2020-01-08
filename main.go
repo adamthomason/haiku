@@ -60,7 +60,21 @@ func generateDictionary() Dictionary {
 }
 
 func (dictionary *Dictionary) generateHaiku() {
-	fmt.Printf("%s\n%s\n%s", dictionary.generateLine(5), dictionary.generateLine(7), dictionary.generateLine(5))
+	line1 := dictionary.ensureSyllables(dictionary.generateLine(5), 5)
+	line2 := dictionary.ensureSyllables(dictionary.generateLine(7), 7)
+	line3 := dictionary.ensureSyllables(dictionary.generateLine(5), 5)
+
+	fmt.Printf("%s\n%s\n%s", line1, line2, line3)
+}
+
+func (dictionary *Dictionary) ensureSyllables(line string, length int) string {
+	checkedLine := line
+
+	for (syllables.CountSyllables([]byte(checkedLine))) != length {
+		checkedLine = dictionary.generateLine(length)
+	}
+
+	return checkedLine
 }
 
 func (dictionary *Dictionary) generateLine(syllableCount int) string {
