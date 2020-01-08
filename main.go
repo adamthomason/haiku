@@ -68,14 +68,22 @@ func (dictionary *Dictionary) generateLine(syllableCount int) string {
 	line := ""
 
 	for remainingCount > 0 {
-		time.Sleep(time.Millisecond * 20)
-		rand.Seed(time.Now().UnixNano())
-		randomSyllable := rand.Intn(remainingCount) + 1
+		time.Sleep(time.Millisecond * 3)
+
+		s1 := rand.NewSource(time.Now().UnixNano())
+		r1 := rand.New(s1)
+		r1.Seed(time.Now().UnixNano())
+
+		randomSyllable := r1.Intn(remainingCount) + 1
+
+		time.Sleep(time.Millisecond * 3)
+
+		s2 := rand.NewSource(time.Now().UnixNano())
+		r2 := rand.New(s2)
+		r2.Seed(time.Now().UnixNano())
 
 		max := len(dictionary.words[randomSyllable])
-
-		rand.Seed(time.Now().UnixNano())
-		randomWord := rand.Intn(max)
+		randomWord := r2.Intn(max)
 
 		line = line + dictionary.words[randomSyllable][randomWord] + " "
 
