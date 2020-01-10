@@ -2,9 +2,11 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"log"
 	"math/rand"
+	"net/http"
 	"os"
 	"time"
 	"unicode"
@@ -17,10 +19,29 @@ type Dictionary struct {
 	words map[int][]string
 }
 
-func main() {
-	dictionary := generateDictionary()
+// Poem contains the poem structure
+type Poem struct {
+	First, Second, Third string
+}
 
-	dictionary.generateHaiku()
+func main() {
+	http.HandleFunc("/", healthcheck)
+	http.HandleFunc("/poem", poemHandler)
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+func healthcheck(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Ok."))
+}
+
+func poemHandler(w http.ResponseWriter, r *http.Request) {
+	dictionary := generateDictionary()
+	poem := dictionary.generateHaiku()
+	result, _ := json.Marshal(&poem)
+
+	fmt.Println(string(result))
+
+	w.Write(result)
 }
 
 func ucFirst(phrase string) string {
@@ -59,12 +80,14 @@ func generateDictionary() Dictionary {
 	return dictionary
 }
 
-func (dictionary *Dictionary) generateHaiku() {
-	line1 := dictionary.ensureSyllables(dictionary.generateLine(5), 5)
-	line2 := dictionary.ensureSyllables(dictionary.generateLine(7), 7)
-	line3 := dictionary.ensureSyllables(dictionary.generateLine(5), 5)
+func (dictionary *Dictionary) generateHaiku() Poem {
+	poem := Poem{
+		dictionary.ensureSyllables(dictionary.generateLine(5), 5),
+		dictionary.ensureSyllables(dictionary.generateLine(7), 7),
+		dictionary.ensureSyllables(dictionary.generateLine(5), 5),
+	}
 
-	fmt.Printf("%s\n%s\n%s", line1, line2, line3)
+	return poem
 }
 
 func (dictionary *Dictionary) ensureSyllables(line string, length int) string {

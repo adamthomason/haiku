@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: haiku-api
+spec:
+  selector:
+    matchLabels:
+      run: haiku-api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: haiku-api
+    spec:
+      containers:
+        - name: haiku-api
+          image: adamthomason93/haiku-api:0.2
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: haiku-api-service
+  labels:
+    name: haiku-api-service
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    run: haiku-api
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: haiku-api
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+    - host: haiku-api.test
+      http:
+        paths:
+          - backend:
+              serviceName: haiku-api-service
+              servicePort: 80
